@@ -1,0 +1,109 @@
+.header{
+  background:rgb(0, 191, 255);
+  position:sticky;
+  z-index: 1;
+  top: 0px;
+  height: 150px;
+  .flex-wrap;
+  .flex-j-sa;
+  .flex-d-c;
+  .countTitle{
+    padding-left: 15px;
+  }
+  .countTitle span{
+    padding-left: 20px;
+    font-size: 40px;
+    color:@bgWhite
+  }
+  .selectBtn{
+    width: 400px;
+    .flex-wrap;
+    position: absolute;
+    bottom: 0px;
+    right: 25px;
+    height: 50px;
+    
+  }
+  .selectBtn button{
+    margin-left: 15px;
+    --text-color:@bgWhite !important;
+  }
+}
+.contaner{
+  height: 100vh;
+  width: 100%;
+  background: #eee;
+}
+.popTitle{
+  text-align: center;
+  line-height:120px;
+  height: 120px;
+ 
+}
+.popContent{
+  height: calc(60vh - 120px);
+  background: #eee;
+  .popMenuList{
+    width: 700px;
+  overflow: hidden;
+    margin: 0 auto;
+    .allType{
+      margin-top: 40px;
+    }
+    .list{
+      margin-top: 30px;
+      margin-bottom: 30px;
+      width:100%;
+      .listBox{
+        .flex-wrap;
+        .flex-j-sa;
+       .flex-wrap-w;
+        .listItem{
+          width: 200px;
+          height: 75px;
+          margin-bottom: 20px;
+          border-radius: 10px;
+          .flex-wrap;
+          .flex-v-h-c;
+          background: @bgWhite;
+        }
+        .activeCurrent{
+          background: #1677ff;
+          color: @bgWhite;
+
+        }
+      }
+      
+    }
+  }
+}
+
+.contanerBoxList{
+  // background: red;
+  width: 700px;
+  border-radius: 15px;
+  margin: 0 auto  ;
+  overflow: hidden;
+  // margin-top: 20px;
+  min-height: 200px;
+  .contanerCar{
+    margin-top: 30px;
+    background: @bgWhite;
+    .carItemList{
+      margin-bottom: 30px;
+      border-bottom: 1px solid #eee;
+      .carItem{
+        .flex-wrap;
+        .flex-j-sb;
+        margin-bottom: 60px;
+      }
+      .carItemTime{
+        margin-bottom: 30px;
+      }
+    }
+    .carItemList:last-child{
+      border-bottom: none;
+    }
+    
+  }
+}
