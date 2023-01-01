@@ -89,13 +89,23 @@
   .contanerCar{
     margin-top: 30px;
     background: @bgWhite;
+    .extra{
+      width: 350px;
+      .flex-wrap;
+      .flex-j-sa;
+    }
     .carItemList{
       margin-bottom: 30px;
       border-bottom: 1px solid #eee;
       .carItem{
         .flex-wrap;
         .flex-j-sb;
+        font-size: 24px;
         margin-bottom: 60px;
+        .acount{
+          font-size: 24px;
+          color: #00FF00;
+        }
       }
       .carItemTime{
         margin-bottom: 30px;
@@ -106,4 +116,61 @@
     }
     
   }
+}
+
+.editIcon{
+  position: fixed;
+  right: 50px;
+  bottom: 150px;
+  width: 100px;
+  height: 100px;
+  background: @bgWhite;
+  .flex-wrap;
+  .flex-v-h-c;
+  border-radius: 50%;
+}
+
+.popAccountEdit{
+  width: 680px;
+  margin: 0 auto;
+  margin-top: 90px;
+  height: 150px;
+  .categoryBox{
+    .flex-wrap;
+    .flex-j-sb;
+    .categoryList span{
+      margin-right: 20px;
+    }
+  }
+}
+.accountBox{
+  margin-top: 55px;
+  height: 80px;
+  border-bottom: 1px solid #eee;
+}
+.accountBox >span{
+  font-size: 80px;
+  font-weight: bold;
+}
+.selectorBox{
+  width: 700px;
+  margin: 0 auto;
+  margin-top: 30px;
+  .selectBoxList{
+    overflow: auto !important;
+  }
+}
+.remark{
+  width: 700px;
+  margin: 0 auto;
+  margin-top: 30px;
+  .TextArea{
+    display: none;
+    padding-top: 20px;
+    border: 1px solid #eee;
+  }
+}
+.remark >p{
+  color: #1677ff;
+  padding-bottom: 15px;
 }

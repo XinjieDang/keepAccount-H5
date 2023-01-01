@@ -33,10 +33,3 @@ const routerMap: RouteObject[] = [
 ]
 
 export default routerMap
-
-// children: [
-//   {
-//     path: "/a/t",
-//     element: <T />,
-//   },
-// ],
