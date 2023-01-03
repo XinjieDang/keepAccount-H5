@@ -5,23 +5,27 @@ const Home = React.lazy(() => import('@/pages/home/Index')) // 路由懒加载�
 const Login = React.lazy(() => import('@/pages/login/Index'))
 const User = React.lazy(() => import('@/pages/user/Index'))
 const Count = React.lazy(() => import('@/pages/count/Index'))
-import { RouteObject } from 'react-router-dom'
+import { Navigate, RouteObject } from 'react-router-dom'
 
 const routerMap: RouteObject[] = [
   {
     path: '/',
+    element: <Navigate to="/layout/home" />,
+  },
+  {
+    path: '/layout',
     element: <Layout />,
     children: [
       {
-        path: '/home',
+        path: 'home',
         element: <Home />,
       },
       {
-        path: '/count',
+        path: 'count',
         element: <Count />,
       },
       {
-        path: '/user',
+        path: 'user',
         element: <User />,
       },
     ],
