@@ -23,7 +23,7 @@ export default function Index() {
     form.validateFields().then((res) => {
       console.log(res) //拿到表单信息
       //路由跳转
-      navigate('/home', {
+      navigate('/layout/home', {
         replace: true,
         state: {
           id: 1,
