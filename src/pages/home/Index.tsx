@@ -17,7 +17,6 @@ import {
   MinusCircleOutline,
   FillinOutline,
 } from 'antd-mobile-icons'
-import Item from 'antd-mobile/es/components/dropdown/item'
 export default function Home() {
   //类型选择弹出层
   const [visibleType, setvisibleType] = useState(false)
