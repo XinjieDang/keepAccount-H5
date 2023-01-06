@@ -6,7 +6,7 @@ export default function Index() {
     <>
       <div>
         <Outlet></Outlet>
-        <Tabs />
+        <Tabs activeId={1} />
       </div>
     </>
   )

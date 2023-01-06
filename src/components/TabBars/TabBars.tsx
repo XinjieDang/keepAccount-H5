@@ -1,9 +1,16 @@
 import { Badge, TabBar } from 'antd-mobile'
-import React, { useState } from 'react'
+import React, { useState, FC, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
-import style from './tabBars.module.less'
+import style from './style.module.less'
 import { TextOutline, PieOutline, UserOutline } from 'antd-mobile-icons'
-export default function TabBars() {
+import { type } from 'os'
+type CurrentActiveId = {
+  activeId: number
+}
+const TabBars: FC<CurrentActiveId> = (props) => {
+  useEffect(() => {
+    console.log('当前的id', props.activeId)
+  })
   const tabs = [
     {
       key: 'home',
@@ -44,3 +51,4 @@ export default function TabBars() {
     </div>
   )
 }
+export default TabBars

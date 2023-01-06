@@ -1,15 +1,28 @@
-import { Avatar, Button, List, Tag } from 'antd-mobile'
-import React from 'react'
+import { Avatar, Button, List, ListItemProps, Tag } from 'antd-mobile'
+import React, { MouseEvent } from 'react'
 import style from './index.module.less'
 import { SetOutline, LockOutline, TagOutline } from 'antd-mobile-icons'
+import { Outlet, useNavigate } from 'react-router-dom'
+const userMenus = [
+  { key: 1, title: '用户信息修改', icon: 'SetOutline', path: '/userInfo' },
+  { key: 2, title: '修改密码', icon: '<LockOutline/>', path: '/updatePwd' },
+  { key: 3, title: '关于', icon: '<TagOutline/>', path: '/about' },
+]
 
 export default function Index() {
+  const navigate = useNavigate()
   const demoAvatarImages = [
     'https://images.unsplash.com/photo-1548532928-b34e3be62fc6?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ',
-    'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9',
-    'https://images.unsplash.com/photo-1542624937-8d1e9f53c1b9?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ',
-    'https://images.unsplash.com/photo-1546967191-fdfb13ed6b1e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ',
   ]
+  const handleOpenPage = (path: string) => {
+    //路由跳转
+    navigate(path, {
+      state: {
+        id: 1,
+        name: 'admin',
+      },
+    })
+  }
 
   return (
     <>
@@ -18,8 +31,8 @@ export default function Index() {
           <div className={style.userBox}>
             <div className={style.userText}>
               <div>
-                <Tag round color="#fff" fill="outline">
-                  用户昵称 admin
+                <Tag style={{ opacity: 0.6 }} round color="#fff" fill="outline">
+                  昵称 admin
                 </Tag>
                 <div className={style.userSign}>☘️个性签名没有</div>
               </div>
@@ -35,15 +48,16 @@ export default function Index() {
         <div className={style.mainContent}>
           <div className={style.userSetMenu}>
             <List>
-              <List.Item prefix={<SetOutline />} onClick={() => {}}>
-                用户信息
-              </List.Item>
-              <List.Item prefix={<LockOutline />} onClick={() => {}}>
-                修改密码
-              </List.Item>
-              <List.Item prefix={<TagOutline />} onClick={() => {}}>
-                关于
-              </List.Item>
+              {userMenus.map((item) => (
+                <List.Item
+                  prefix={<LockOutline />}
+                  data-path={item.path}
+                  onClick={() => handleOpenPage(item.path)}
+                  key={item.key}
+                >
+                  {item.title}
+                </List.Item>
+              ))}
             </List>
           </div>
         </div>
