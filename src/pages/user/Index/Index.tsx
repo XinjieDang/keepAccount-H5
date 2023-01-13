@@ -1,4 +1,12 @@
-import { Avatar, Button, List, ListItemProps, Tag } from 'antd-mobile'
+import {
+  Avatar,
+  Button,
+  Dialog,
+  List,
+  ListItemProps,
+  Tag,
+  Toast,
+} from 'antd-mobile'
 import React, { MouseEvent } from 'react'
 import style from './index.module.less'
 import { SetOutline, LockOutline, TagOutline } from 'antd-mobile-icons'
@@ -22,6 +30,17 @@ export default function Index() {
         name: 'admin',
       },
     })
+  }
+  const handleLogout = async () => {
+    const result = await Dialog.confirm({
+      content: '你确定退出登录吗？',
+    })
+    if (result) {
+      navigate('/login', {
+        replace: true,
+      })
+    } else {
+    }
   }
 
   return (
@@ -67,7 +86,7 @@ export default function Index() {
             color="danger"
             fill="solid"
             size="mini"
-            onClick={() => console.log(1)}
+            onClick={handleLogout}
           >
             退出登录
           </Button>

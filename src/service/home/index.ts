@@ -1,9 +1,9 @@
 interface urlType {
-  treeUrl: string
+  loginUrl: string
 }
 
 const url: urlType = {
-  treeUrl: '/tree/getTreeList',
+  loginUrl: '/user/login',
 }
 
 export default url

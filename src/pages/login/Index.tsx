@@ -4,7 +4,7 @@ import style from './index.module.less'
 import { Form, Input, Button } from 'antd-mobile'
 import { EyeInvisibleOutline, EyeOutline } from 'antd-mobile-icons'
 import bgImage from '@/assets/images/head-bg.jpg'
-
+import api from '@/api'
 const styleBg = {
   bgd: {
     backgroundImage: `url(${bgImage})`,
@@ -22,14 +22,23 @@ export default function Index() {
     // 表单校验
     form.validateFields().then((res) => {
       console.log(res) //拿到表单信息
-      //路由跳转
-      navigate('/layout/home', {
-        replace: true,
-        state: {
-          id: 1,
-          name: 'admin',
-        },
-      })
+      login(res)
+    })
+  }
+  const login = (loginRequest: LoginRequest) => {
+    api.home.login(loginRequest).then((res) => {
+      const { token } = res
+      if (token) {
+        localStorage.setItem('token', token)
+        //路由跳转
+        navigate('/layout/home', {
+          replace: true,
+          state: {
+            id: 1,
+            name: 'admin',
+          },
+        })
+      }
     })
   }
   return (
@@ -49,7 +58,7 @@ export default function Index() {
           </Form.Item>
           <Form.Item
             label="密码"
-            name="password"
+            name="passWord"
             rules={[
               {
                 required: true,

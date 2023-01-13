@@ -2,8 +2,8 @@
 import request from '../../request/index'
 import services from '@/service'
 let api = {
-  getTreeList: () => {
-    return request.get(services.treeUrl)
+  login: (data: any) => {
+    return request.post(services.loginUrl, data)
   },
 }
 export default api
