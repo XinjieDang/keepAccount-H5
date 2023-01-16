@@ -5,5 +5,8 @@ let api = {
   login: (data: any) => {
     return request.post(services.loginUrl, data)
   },
+  TypeMenuList: () => {
+    return request.get(services.categoryUrl)
+  },
 }
 export default api

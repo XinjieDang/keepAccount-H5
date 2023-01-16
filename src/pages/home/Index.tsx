@@ -9,7 +9,7 @@ import {
   TextArea,
   NumberKeyboard,
 } from 'antd-mobile'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import style from './index.module.less'
 import {
   DownOutline,
@@ -17,6 +17,7 @@ import {
   MinusCircleOutline,
   FillinOutline,
 } from 'antd-mobile-icons'
+import api from '@/api'
 export default function Home() {
   //类型选择弹出层
   const [visibleType, setvisibleType] = useState(false)
@@ -56,58 +57,16 @@ export default function Home() {
   const handleKeyBoardOnDelete = () => {
     setKeyboardValue(keyboardValue.substring(0, keyboardValue.length - 1))
   }
-
-  // 类型菜单列表
-  const menuList = [
-    {
-      key: 1,
-      type: '支出',
-      list: [
-        {
-          key: 1,
-          title: '餐饮',
-        },
-        {
-          key: 2,
-          title: '服饰',
-        },
-        {
-          key: 3,
-          title: '出行',
-        },
-        {
-          key: 4,
-          title: '旅游',
-        },
-        {
-          key: 5,
-          title: '礼物',
-        },
-        {
-          key: 6,
-          title: '人情',
-        },
-      ],
-    },
-    {
-      key: 2,
-      type: '收入',
-      list: [
-        {
-          key: 7,
-          title: '餐饮',
-        },
-        {
-          key: 8,
-          title: '服饰',
-        },
-        {
-          key: 9,
-          title: '交通',
-        },
-      ],
-    },
-  ]
+  const [menuList, setMenuList] = useState([])
+  //获取记账类型菜单
+  const getKaTypeMenuList = () => {
+    api.home.TypeMenuList().then((res) => {
+      setMenuList(res)
+    })
+  }
+  useEffect(() => {
+    getKaTypeMenuList()
+  }, [])
   // 账单类型列表
   const accountlist = [
     {
@@ -206,25 +165,30 @@ export default function Home() {
               color="primary"
               fill="solid"
               size="mini"
-              onClick={() => setCurrentTypeText('全部类型')}
+              onClick={() => {
+                setCurrentTypeText('全部类型')
+                setCurrentKey(100)
+              }}
             >
               全部类型
             </Button>
           </div>
-          {menuList.map((item) => (
-            <div className={style.list} key={item.key}>
-              <h3 style={{ paddingBottom: '15px' }}>{item.type}</h3>
+          {menuList.map((item: any) => (
+            <div className={style.list} key={item.payType}>
+              <h3 style={{ paddingBottom: '15px' }}>
+                {item.payType == 0 ? '支出' : '收入'}
+              </h3>
               <div className={style.listBox}>
-                {item.list.map((item) => (
+                {item.list.map((item: any) => (
                   <div
                     className={`${style.listItem} ${
-                      currentKey === item.key ? style.activeCurrent : ''
+                      currentKey === item.id ? style.activeCurrent : ''
                     }`}
-                    key={item.key}
-                    data-key={item.key}
+                    key={item.id}
+                    data-key={item.id}
                     onClick={handleActiveItem}
                   >
-                    {item.title}
+                    {item.categoryName}
                   </div>
                 ))}
               </div>
@@ -352,7 +316,7 @@ export default function Home() {
             onMaskClick={() => {
               setvisibleType(false)
             }}
-            bodyStyle={{ height: '60vh' }}
+            bodyStyle={{ height: 'auto' }}
             onClose={() => setvisibleType(false)}
           >
             {mockContent}
