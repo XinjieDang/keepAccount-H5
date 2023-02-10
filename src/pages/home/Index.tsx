@@ -8,16 +8,19 @@ import {
   Selector,
   TextArea,
   NumberKeyboard,
+  Image,
 } from 'antd-mobile'
+import * as dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
 import style from './index.module.less'
-import {
-  DownOutline,
-  AddCircleOutline,
-  MinusCircleOutline,
-  FillinOutline,
-} from 'antd-mobile-icons'
+import { DownOutline, FillinOutline } from 'antd-mobile-icons'
 import api from '@/api'
+import zhiImg from '@/assets/images/zhi.png'
+import shouImg from '@/assets/images/shou.png'
+import { it } from 'node:test'
+
+const zhiImgSrc = zhiImg
+const shouImgSrc = shouImg
 export default function Home() {
   //类型选择弹出层
   const [visibleType, setvisibleType] = useState(false)
@@ -35,6 +38,8 @@ export default function Home() {
   const [currentTypeText, setCurrentTypeText] = useState<string>('全部类型')
   //当前选中的日期
   const [pickerValue, setPickerValue] = useState<string | null>('2022-12')
+  //当前选中的日期
+  const [pickerValue2, setPickerValue2] = useState<string | null>('12-1')
   //点击选中类型时
   const handleActiveItem = (e: React.MouseEvent<HTMLDivElement>) => {
     // 设置当前选中的类型key
@@ -42,9 +47,25 @@ export default function Home() {
     //设置当前选中类型文字
     setCurrentTypeText(e.currentTarget.innerText)
   }
+  let [options, setOptions] = useState([])
   //切换记账类型
   const handleSwitchKaType = (e: React.MouseEvent<HTMLSpanElement>) => {
-    setCurrentKaTypeText(Number(e.currentTarget.dataset.key))
+    const type = Number(e.currentTarget.dataset.key)
+    setCurrentKaTypeText(type)
+    changeKaType(type)
+  }
+
+  const changeKaType = (type: number) => {
+    let newOption: KaType = []
+    //设置账单类型
+    const list = menuList.filter((item) => item.payType == type)
+    list[0].list.map((item) => {
+      newOption.push({
+        label: item.categoryName,
+        value: item.id,
+      })
+    })
+    setOptions(newOption)
   }
   //弹出备注信息
   const [addRemark, setRemark] = useState(false)
@@ -59,99 +80,49 @@ export default function Home() {
   }
   const [menuList, setMenuList] = useState([])
   //获取记账类型菜单
-  const getKaTypeMenuList = () => {
-    api.home.TypeMenuList().then((res) => {
-      setMenuList(res)
+  const getKaTypeMenuList = async () => {
+    const res = await api.home.TypeMenuList()
+    setMenuList(res)
+    //changeKaType(0)
+  }
+
+  // 获取记账记录
+  const [amountList, setAmountList] = useState([])
+  const getAmountList = () => {
+    api.home.amountInfo().then((res) => {
+      setAmountList(res)
     })
+  }
+
+  //const [amount, setAmount] = useState({})
+
+  let param = {
+    categoryId: 0,
+    amount: 0,
+    remark: '',
+    createTime: '',
+  }
+  //记账弹窗确认提交
+  const handleConfirm = () => {
+    param.amount = parseInt(keyboardValue)
+    console.log('提交了表单', param)
   }
   useEffect(() => {
     getKaTypeMenuList()
+    getAmountList()
   }, [])
-  // 账单类型列表
-  const accountlist = [
-    {
-      key: 1,
-      DateText: '2022-12',
-      income: 100,
-      expenses: 200,
-      list: [
-        {
-          key: 1,
-          type: 0,
-          accountText: '餐饮',
-          account: 200,
-          date: '22:00',
-        },
-        {
-          key: 2,
-          type: 1,
-          accountText: '收款',
-          account: 100,
-          date: '8:00',
-        },
-      ],
-    },
-    {
-      key: 2,
-      DateText: '2022-12',
-      income: 100,
-      expenses: 200,
-      list: [
-        {
-          key: 1,
-          type: 0,
-          accountText: '餐饮',
-          account: 200,
-          date: '22:00',
-        },
-        {
-          key: 2,
-          type: 1,
-          accountText: '收款',
-          account: 100,
-          date: '8:00',
-        },
-      ],
-    },
-  ]
+
   //记账类型
   const keepAccountTypeList = [
     {
-      key: 1,
-      text: '收入',
+      key: 0,
+      text: '支出',
       kaType: 0,
     },
     {
-      key: 2,
-      text: '支出',
+      key: 1,
+      text: '收入',
       kaType: 1,
-    },
-  ]
-
-  const options = [
-    {
-      label: '选项1',
-      value: '1',
-    },
-    {
-      label: '选项二',
-      value: '2',
-    },
-    {
-      label: '选项三',
-      value: '3',
-    },
-    {
-      label: '选项四',
-      value: '4',
-    },
-    {
-      label: '选项五',
-      value: '5',
-    },
-    {
-      label: '选项六',
-      value: '6',
     },
   ]
   // 弹窗层类型内容
@@ -224,7 +195,7 @@ export default function Home() {
               fill="outline"
               onClick={() => setPickerVisible2(true)}
             >
-              12-31
+              {pickerValue2}
               <Space>
                 <DownOutline />
               </Space>
@@ -240,7 +211,14 @@ export default function Home() {
             options={options}
             defaultValue={['1']}
             showCheckMark={false}
-            onChange={(arr, extend) => console.log(arr, extend.items)}
+            onChange={(arr, extend) => {
+              // setAmount({
+              //   categoryId: parseInt(arr[0]),
+              //   amount: 0,
+              //   remark: '',
+              // })
+              param.categoryId = parseInt(arr[0])
+            }}
           />
         </div>
         <div className={style.remark}>
@@ -254,6 +232,9 @@ export default function Home() {
               placeholder="请输入备注信息"
               showCount
               maxLength={50}
+              onChange={(value) => {
+                param.remark = value
+              }}
             />
           </div>
         </div>
@@ -267,6 +248,7 @@ export default function Home() {
           }
           customKey={'-'}
           confirmText="确定"
+          onConfirm={handleConfirm}
         />
       </div>
     </>
@@ -329,9 +311,7 @@ export default function Home() {
             }}
             precision="month"
             onConfirm={(val) => {
-              setPickerValue(
-                val.getFullYear() + '-' + val.getMonth().toString()
-              )
+              setPickerValue(dayjs(val).format('YYYY-MM'))
             }}
           />
           <DatePicker
@@ -341,9 +321,8 @@ export default function Home() {
             }}
             precision="day"
             onConfirm={(val) => {
-              setPickerValue(
-                val.getFullYear() + '-' + val.getMonth().toString()
-              )
+              setPickerValue2(dayjs(val).format('MM-DD'))
+              param.createTime = dayjs(val).format('MM-DD')
             }}
           />
         </div>
@@ -351,33 +330,49 @@ export default function Home() {
       {/* 中间内容 */}
       <div className={style.contaner}>
         <div className={style.contanerBoxList}>
-          {accountlist.map((item) => (
+          {amountList.map((item: any) => (
             <Card
               className={style.contanerCar}
-              title={item.DateText}
-              key={item.key}
+              title={item.createDate}
+              key={item.createDate}
               extra={
                 <div className={style.extra}>
-                  <AddCircleOutline />
-                  <div>￥1888</div>
-                  <MinusCircleOutline />
-                  <div>￥18888</div>
+                  <Image
+                    src={zhiImgSrc}
+                    width={15}
+                    height={15}
+                    fit="cover"
+                    style={{ borderRadius: 4 }}
+                  />
+                  <div>{item.expend}</div>
+                  <Image
+                    src={shouImgSrc}
+                    width={15}
+                    height={15}
+                    fit="cover"
+                    style={{ borderRadius: 4 }}
+                  />
+                  <div>{item.income}</div>
                 </div>
               }
             >
-              {item.list.map((item) => (
+              {item.amountBos.map((item: any) => (
                 <div className={style.carItemList} key={item.key}>
                   <div className={style.carItem}>
-                    <div>{item.accountText}</div>
+                    <div>{item.remark}</div>
                     <div
-                      style={{ color: item.type === 0 ? '#99ff99' : '#fdacac' }}
+                      style={{
+                        color: item.amountType === 0 ? '#fdacac' : '#97b2ff',
+                      }}
                     >
-                      {item.type === 0
-                        ? '+' + item.account
-                        : '-' + item.account}
+                      {item.amountType === 0
+                        ? '-' + item.amount
+                        : '+' + item.amount}
                     </div>
                   </div>
-                  <div className={style.carItemTime}>{item.date}</div>
+                  <div className={style.carItemTime}>
+                    {dayjs(item.createTime).format('HH:mm')}
+                  </div>
                 </div>
               ))}
             </Card>
@@ -398,7 +393,7 @@ export default function Home() {
         onMaskClick={() => {
           setVisibleAccountEdit(false)
         }}
-        bodyStyle={{ height: '79vh' }}
+        bodyStyle={{ height: '85vh' }}
         onClose={() => setVisibleAccountEdit(false)}
       >
         {mockContentEdit}

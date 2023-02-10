@@ -8,5 +8,11 @@ let api = {
   TypeMenuList: () => {
     return request.get(services.categoryUrl)
   },
+  addAmount: (data: any) => {
+    return request.post(services.addAmountUrl, data)
+  },
+  amountInfo: () => {
+    return request.get(services.amountInfoUrl)
+  },
 }
 export default api

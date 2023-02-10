@@ -1,16 +1,8 @@
-import {
-  Avatar,
-  Button,
-  Dialog,
-  List,
-  ListItemProps,
-  Tag,
-  Toast,
-} from 'antd-mobile'
-import React, { MouseEvent } from 'react'
+import { Avatar, Button, Dialog, List, Tag, Toast } from 'antd-mobile'
+import React from 'react'
 import style from './index.module.less'
-import { SetOutline, LockOutline, TagOutline } from 'antd-mobile-icons'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { LockOutline } from 'antd-mobile-icons'
+import { useNavigate } from 'react-router-dom'
 const userMenus = [
   { key: 1, title: '用户信息修改', icon: 'SetOutline', path: '/userInfo' },
   { key: 2, title: '修改密码', icon: '<LockOutline/>', path: '/updatePwd' },
