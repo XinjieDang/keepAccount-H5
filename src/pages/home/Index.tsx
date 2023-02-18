@@ -17,10 +17,19 @@ import { DownOutline, FillinOutline } from 'antd-mobile-icons'
 import api from '@/api'
 import zhiImg from '@/assets/images/zhi.png'
 import shouImg from '@/assets/images/shou.png'
-import { it } from 'node:test'
+import PullToRefresh, {
+  PullStatus,
+} from 'antd-mobile/es/components/pull-to-refresh'
 
 const zhiImgSrc = zhiImg
 const shouImgSrc = shouImg
+// 下拉刷新自定义文案
+const statusRecord: Record<PullStatus, string> = {
+  pulling: '用力拉',
+  canRelease: '松开吧',
+  refreshing: '玩命加载中...',
+  complete: '好啦',
+}
 export default function Home() {
   //类型选择弹出层
   const [visibleType, setvisibleType] = useState(false)
@@ -47,7 +56,7 @@ export default function Home() {
     //设置当前选中类型文字
     setCurrentTypeText(e.currentTarget.innerText)
   }
-  let [options, setOptions] = useState([])
+  let [options, setOptions] = useState<KaType>([])
   //切换记账类型
   const handleSwitchKaType = (e: React.MouseEvent<HTMLSpanElement>) => {
     const type = Number(e.currentTarget.dataset.key)
@@ -58,8 +67,8 @@ export default function Home() {
   const changeKaType = (type: number) => {
     let newOption: KaType = []
     //设置账单类型
-    const list = menuList.filter((item) => item.payType == type)
-    list[0].list.map((item) => {
+    const list: any = menuList.filter((item: any) => item.payType == type)
+    list[0].list.map((item: any) => {
       newOption.push({
         label: item.categoryName,
         value: item.id,
@@ -94,18 +103,27 @@ export default function Home() {
     })
   }
 
-  //const [amount, setAmount] = useState({})
-
-  let param = {
+  const [amount, setAmount] = useState({
     categoryId: 0,
     amount: 0,
     remark: '',
     createTime: '',
-  }
+  })
   //记账弹窗确认提交
   const handleConfirm = () => {
-    param.amount = parseInt(keyboardValue)
-    console.log('提交了表单', param)
+    //设置金额
+    amount.amount = parseInt(keyboardValue)
+    setAmount({ ...amount })
+    console.log('提交了表单', amount)
+    //发送请求
+    api.home.addAmount(amount).then((res) => {
+      if (res) {
+        //刷新记账列表
+        getAmountList()
+        //关闭弹出层
+        setVisibleAccountEdit(false)
+      }
+    })
   }
   useEffect(() => {
     getKaTypeMenuList()
@@ -212,12 +230,8 @@ export default function Home() {
             defaultValue={['1']}
             showCheckMark={false}
             onChange={(arr, extend) => {
-              // setAmount({
-              //   categoryId: parseInt(arr[0]),
-              //   amount: 0,
-              //   remark: '',
-              // })
-              param.categoryId = parseInt(arr[0])
+              amount.categoryId = parseInt(arr[0])
+              setAmount({ ...amount })
             }}
           />
         </div>
@@ -233,7 +247,8 @@ export default function Home() {
               showCount
               maxLength={50}
               onChange={(value) => {
-                param.remark = value
+                amount.remark = value
+                setAmount({ ...amount })
               }}
             />
           </div>
@@ -322,62 +337,72 @@ export default function Home() {
             precision="day"
             onConfirm={(val) => {
               setPickerValue2(dayjs(val).format('MM-DD'))
-              param.createTime = dayjs(val).format('MM-DD')
+              // amount.createTime = dayjs(val).format('YYYY-MM-DD:ss:mm')
+              // setAmount({ ...amount })
             }}
           />
         </div>
       </div>
       {/* 中间内容 */}
       <div className={style.contaner}>
-        <div className={style.contanerBoxList}>
-          {amountList.map((item: any) => (
-            <Card
-              className={style.contanerCar}
-              title={item.createDate}
-              key={item.createDate}
-              extra={
-                <div className={style.extra}>
-                  <Image
-                    src={zhiImgSrc}
-                    width={15}
-                    height={15}
-                    fit="cover"
-                    style={{ borderRadius: 4 }}
-                  />
-                  <div>{item.expend}</div>
-                  <Image
-                    src={shouImgSrc}
-                    width={15}
-                    height={15}
-                    fit="cover"
-                    style={{ borderRadius: 4 }}
-                  />
-                  <div>{item.income}</div>
-                </div>
-              }
-            >
-              {item.amountBos.map((item: any) => (
-                <div className={style.carItemList} key={item.key}>
-                  <div className={style.carItem}>
-                    <div>{item.remark}</div>
-                    <div
-                      style={{
-                        color: item.amountType === 0 ? '#fdacac' : '#97b2ff',
-                      }}
-                    >
-                      {item.amountType === 0
-                        ? '-' + item.amount
-                        : '+' + item.amount}
+        <PullToRefresh
+          onRefresh={async () => {
+            getAmountList()
+          }}
+          renderText={(status) => {
+            return <div>{statusRecord[status]}</div>
+          }}
+        >
+          <div className={style.contanerBoxList}>
+            {amountList.map((item: any) => (
+              <Card
+                className={style.contanerCar}
+                title={item.createDate}
+                key={item.createDate}
+                extra={
+                  <div className={style.extra}>
+                    <Image
+                      src={zhiImgSrc}
+                      width={15}
+                      height={15}
+                      fit="cover"
+                      style={{ borderRadius: 4 }}
+                    />
+                    <div>{item.expend}</div>
+                    <Image
+                      src={shouImgSrc}
+                      width={15}
+                      height={15}
+                      fit="cover"
+                      style={{ borderRadius: 4 }}
+                    />
+                    <div>{item.income}</div>
+                  </div>
+                }
+              >
+                {item.amountBos.map((item: any) => (
+                  <div className={style.carItemList} key={item.createTime}>
+                    <div className={style.carItem}>
+                      <div>{item.remark}</div>
+                      <div
+                        style={{
+                          color: item.amountType === 0 ? '#fdacac' : '#97b2ff',
+                        }}
+                      >
+                        {item.amountType === 0
+                          ? '-' + item.amount
+                          : '+' + item.amount}
+                      </div>
+                    </div>
+                    <div className={style.carItemTime}>
+                      {dayjs(item.createTime).format('HH:mm')}
                     </div>
                   </div>
-                  <div className={style.carItemTime}>
-                    {dayjs(item.createTime).format('HH:mm')}
-                  </div>
-                </div>
-              ))}
-            </Card>
-          ))}
-        </div>
+                ))}
+              </Card>
+            ))}
+          </div>
+        </PullToRefresh>
       </div>
       {/* 固定编辑按钮 */}
       <div
@@ -400,4 +425,7 @@ export default function Home() {
       </Popup>
     </>
   )
+}
+function sleep(arg0: number) {
+  throw new Error('Function not implemented.')
 }
