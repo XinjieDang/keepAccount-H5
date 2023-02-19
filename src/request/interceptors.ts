@@ -1,6 +1,7 @@
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { Toast } from 'antd-mobile'
 import service from './service'
+import { useNavigate } from 'react-router-dom'
 service.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     //给请求头设置token
@@ -32,10 +33,14 @@ service.interceptors.response.use(
     let message = ''
     // HTTP 状态码
     const status = error.response?.status
+    const navigate = useNavigate()
     switch (status) {
       case 401:
         message = 'token失效,请重新登录'
         // 这里可以触发退出的 action
+        // navigate('/login', {
+        //   replace: true,
+        // })
         break
       case 403:
         message = '没有权限,请获取权限后登录'

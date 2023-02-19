@@ -56,6 +56,8 @@ export default function Home() {
     //设置当前选中类型文字
     setCurrentTypeText(e.currentTarget.innerText)
   }
+  // 记账总对象
+  const [sumAmount, setSumAmount] = useState({ allExpend: 0, allIncome: 0 })
   let [options, setOptions] = useState<KaType>([])
   //切换记账类型
   const handleSwitchKaType = (e: React.MouseEvent<HTMLSpanElement>) => {
@@ -99,7 +101,10 @@ export default function Home() {
   const [amountList, setAmountList] = useState([])
   const getAmountList = () => {
     api.home.amountInfo().then((res) => {
-      setAmountList(res)
+      setAmountList(res.data)
+      sumAmount.allExpend = res.allExpend
+      sumAmount.allIncome = res.allIncome
+      setSumAmount({ ...sumAmount })
     })
   }
 
@@ -273,10 +278,10 @@ export default function Home() {
       {/* 头部 */}
       <div className={style.header}>
         <div className={style.countTitle}>
-          总支出:<span>￥1758544</span>
+          总支出:<span>￥{sumAmount.allExpend}</span>
         </div>
         <div className={style.countTitle}>
-          总收入:<span>￥1758544</span>
+          总收入:<span>￥{sumAmount.allIncome}</span>
         </div>
         {/* 条件筛选 */}
         <div className={style.selectBtn}>
@@ -337,8 +342,6 @@ export default function Home() {
             precision="day"
             onConfirm={(val) => {
               setPickerValue2(dayjs(val).format('MM-DD'))
-              // amount.createTime = dayjs(val).format('YYYY-MM-DD:ss:mm')
-              // setAmount({ ...amount })
             }}
           />
         </div>
@@ -425,7 +428,4 @@ export default function Home() {
       </Popup>
     </>
   )
-}
-function sleep(arg0: number) {
-  throw new Error('Function not implemented.')
 }

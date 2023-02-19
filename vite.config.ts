@@ -24,6 +24,9 @@ export default defineConfig({
           'src/global.less'
         )}";`,
       },
+      module: {
+        rules: [{ test: /\.css$/, use: ['style-loader', 'css-loader'] }],
+      },
     },
     // css 兼容性自动添加浏览器前缀
     postcss: {
