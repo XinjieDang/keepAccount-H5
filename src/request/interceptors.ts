@@ -6,7 +6,7 @@ service.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     //给请求头设置token
     config.headers!.Authorization = `Bearer ${
-      localStorage.getItem('token') || null
+      localStorage.getItem('Authorization') || null
     }`
     return config
   },

@@ -1,19 +1,45 @@
 import { Avatar, Button, Dialog, List, Tag, Toast } from 'antd-mobile'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import style from './index.module.less'
 import { LockOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
+import api from '@/api'
+import { use } from 'echarts/core'
 const userMenus = [
   { key: 1, title: '用户信息修改', icon: 'SetOutline', path: '/userInfo' },
   { key: 2, title: '修改密码', icon: '<LockOutline/>', path: '/updatePwd' },
   { key: 3, title: '关于', icon: '<TagOutline/>', path: '/about' },
 ]
-
 export default function Index() {
   const navigate = useNavigate()
   const demoAvatarImages = [
     'https://images.unsplash.com/photo-1548532928-b34e3be62fc6?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ',
   ]
+  interface User {
+    userName: string
+    avatar: string
+    signature: string
+  }
+  //获取用户信息
+  let currentUser: User = {
+    userName: '',
+    avatar: '',
+    signature: '',
+  }
+  const [user, setUser] = useState<User>(currentUser)
+  const getUserInfo = () => {
+    api.user.getUserInfo().then((res) => {
+      console.log(res)
+      if (res) {
+        currentUser = { ...res }
+        console.log('当前用户', currentUser)
+        setUser({ ...currentUser })
+      }
+    })
+
+    console.log('当前用户=========', user)
+  }
+
   const handleOpenPage = (path: string) => {
     //路由跳转
     navigate(path, {
@@ -31,9 +57,11 @@ export default function Index() {
       navigate('/login', {
         replace: true,
       })
-    } else {
     }
   }
+  useEffect(() => {
+    getUserInfo()
+  }, [])
 
   return (
     <>
@@ -43,15 +71,14 @@ export default function Index() {
             <div className={style.userText}>
               <div>
                 <Tag style={{ opacity: 0.6 }} round color="#fff" fill="outline">
-                  昵称 admin
+                  昵称 {user.userName}
                 </Tag>
-                <div className={style.userSign}>☘️个性签名没有</div>
+                <div className={style.userSign}>
+                  ☘️个性签名:{user.signature}
+                </div>
               </div>
               <div>
-                <Avatar
-                  src={demoAvatarImages[0]}
-                  style={{ '--size': '68px' }}
-                />
+                <Avatar src={user.avatar} style={{ '--size': '68px' }} />
               </div>
             </div>
           </div>

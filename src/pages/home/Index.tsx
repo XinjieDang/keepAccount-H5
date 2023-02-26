@@ -20,6 +20,8 @@ import shouImg from '@/assets/images/shou.png'
 import PullToRefresh, {
   PullStatus,
 } from 'antd-mobile/es/components/pull-to-refresh'
+import { number } from 'echarts/core'
+import { type } from 'os'
 
 const zhiImgSrc = zhiImg
 const shouImgSrc = shouImg
@@ -99,8 +101,16 @@ export default function Home() {
 
   // 获取记账记录
   const [amountList, setAmountList] = useState([])
-  const getAmountList = () => {
-    api.home.amountInfo().then((res) => {
+  type queryDtoType = {
+    categoryId: number
+    createTime: string
+  }
+  const queryAmountRequest: queryDtoType = {
+    categoryId: 0,
+    createTime: '',
+  }
+  const getAmountList = (queryDto: queryDtoType) => {
+    api.home.amountInfo(queryAmountRequest).then((res) => {
       setAmountList(res.data)
       sumAmount.allExpend = res.allExpend
       sumAmount.allIncome = res.allIncome
@@ -124,7 +134,7 @@ export default function Home() {
     api.home.addAmount(amount).then((res) => {
       if (res) {
         //刷新记账列表
-        getAmountList()
+        getAmountList(queryAmountRequest)
         //关闭弹出层
         setVisibleAccountEdit(false)
       }
@@ -132,7 +142,7 @@ export default function Home() {
   }
   useEffect(() => {
     getKaTypeMenuList()
-    getAmountList()
+    getAmountList(queryAmountRequest)
   }, [])
 
   //记账类型
@@ -232,10 +242,10 @@ export default function Home() {
           <Selector
             className={style.selectBoxList}
             options={options}
-            defaultValue={['1']}
+            defaultValue={[1]}
             showCheckMark={false}
             onChange={(arr, extend) => {
-              amount.categoryId = parseInt(arr[0])
+              amount.categoryId = arr[0]
               setAmount({ ...amount })
             }}
           />
@@ -350,7 +360,7 @@ export default function Home() {
       <div className={style.contaner}>
         <PullToRefresh
           onRefresh={async () => {
-            getAmountList()
+            getAmountList(queryAmountRequest)
           }}
           renderText={(status) => {
             return <div>{statusRecord[status]}</div>

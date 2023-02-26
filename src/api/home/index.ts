@@ -11,8 +11,8 @@ let api = {
   addAmount: (data: any) => {
     return request.post(services.addAmountUrl, data)
   },
-  amountInfo: () => {
-    return request.get(services.amountInfoUrl)
+  amountInfo: (data: any) => {
+    return request.post(services.amountInfoUrl, data)
   },
 }
 export default api
