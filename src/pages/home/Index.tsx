@@ -62,10 +62,9 @@ export default function Home() {
   const [sumAmount, setSumAmount] = useState({ allExpend: 0, allIncome: 0 })
   let [options, setOptions] = useState<KaType>([])
   //切换记账类型
-  const handleSwitchKaType = (e: React.MouseEvent<HTMLSpanElement>) => {
-    const type = Number(e.currentTarget.dataset.key)
-    setCurrentKaTypeText(type)
-    changeKaType(type)
+  const handleSwitchKaType = (num: number) => {
+    setCurrentKaTypeText(num)
+    changeKaType(num)
   }
 
   const changeKaType = (type: number) => {
@@ -214,8 +213,7 @@ export default function Home() {
                 color={item.key === currentKaTypeKey ? 'success' : 'default'}
                 fill="outline"
                 key={item.key}
-                data-key={item.key}
-                onClick={handleSwitchKaType}
+                onClick={() => handleSwitchKaType(item.key)}
               >
                 {item.text}
               </Tag>
@@ -420,7 +418,10 @@ export default function Home() {
       {/* 固定编辑按钮 */}
       <div
         className={style.editIcon}
-        onClick={() => setVisibleAccountEdit(true)}
+        onClick={() => {
+          setVisibleAccountEdit(true)
+          handleSwitchKaType(0)
+        }}
       >
         <FillinOutline fontSize={24} />
       </div>
