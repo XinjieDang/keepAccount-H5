@@ -20,11 +20,10 @@ import shouImg from '@/assets/images/shou.png'
 import PullToRefresh, {
   PullStatus,
 } from 'antd-mobile/es/components/pull-to-refresh'
-import { number } from 'echarts/core'
-import { type } from 'os'
-
 const zhiImgSrc = zhiImg
 const shouImgSrc = shouImg
+// 默认时间
+const defaultDate: string = dayjs(new Date()).format('YYYY-MM').toString()
 // 下拉刷新自定义文案
 const statusRecord: Record<PullStatus, string> = {
   pulling: '用力拉',
@@ -48,15 +47,21 @@ export default function Home() {
   //当前选中类型文字
   const [currentTypeText, setCurrentTypeText] = useState<string>('全部类型')
   //当前选中的日期
-  const [pickerValue, setPickerValue] = useState<string | null>('2022-12')
+  const [pickerValue, setPickerValue] = useState<string | null>(defaultDate)
   //当前选中的日期
-  const [pickerValue2, setPickerValue2] = useState<string | null>('12-1')
+  const [pickerValue2, setPickerValue2] = useState<string | null>(defaultDate)
   //点击选中类型时
   const handleActiveItem = (e: React.MouseEvent<HTMLDivElement>) => {
     // 设置当前选中的类型key
-    setCurrentKey(Number(e.currentTarget.dataset.key))
+    const currentKey = Number(e.currentTarget.dataset.key)
+    setCurrentKey(currentKey)
     //设置当前选中类型文字
     setCurrentTypeText(e.currentTarget.innerText)
+    // 发送请求，更新之后关闭弹窗
+    queryAmount.categoryId = currentKey
+    setQueryAmount({ ...queryAmount })
+    getAmountList(queryAmount)
+    setvisibleType(false)
   }
   // 记账总对象
   const [sumAmount, setSumAmount] = useState({ allExpend: 0, allIncome: 0 })
@@ -101,15 +106,19 @@ export default function Home() {
   // 获取记账记录
   const [amountList, setAmountList] = useState([])
   type queryDtoType = {
-    categoryId: number
+    categoryId: any
     createTime: string
   }
   const queryAmountRequest: queryDtoType = {
-    categoryId: 0,
-    createTime: '',
+    categoryId: undefined,
+    createTime: defaultDate,
   }
+  // 记账查询对象
+  const [queryAmount, setQueryAmount] =
+    useState<queryDtoType>(queryAmountRequest)
   const getAmountList = (queryDto: queryDtoType) => {
-    api.home.amountInfo(queryAmountRequest).then((res) => {
+    console.log('发送请求之前的参数', queryAmount)
+    api.home.amountInfo(queryAmount).then((res) => {
       setAmountList(res.data)
       sumAmount.allExpend = res.allExpend
       sumAmount.allIncome = res.allIncome
@@ -133,7 +142,7 @@ export default function Home() {
     api.home.addAmount(amount).then((res) => {
       if (res) {
         //刷新记账列表
-        getAmountList(queryAmountRequest)
+        getAmountList(queryAmount)
         //关闭弹出层
         setVisibleAccountEdit(false)
       }
@@ -141,7 +150,7 @@ export default function Home() {
   }
   useEffect(() => {
     getKaTypeMenuList()
-    getAmountList(queryAmountRequest)
+    getAmountList(queryAmount)
   }, [])
 
   //记账类型
@@ -340,6 +349,10 @@ export default function Home() {
             precision="month"
             onConfirm={(val) => {
               setPickerValue(dayjs(val).format('YYYY-MM'))
+              queryAmount.createTime = dayjs(val).format('YYYY-MM')
+              setQueryAmount({ ...queryAmount })
+              console.log('选择的日期后', queryAmount)
+              getAmountList(queryAmount)
             }}
           />
           <DatePicker
@@ -358,7 +371,7 @@ export default function Home() {
       <div className={style.contaner}>
         <PullToRefresh
           onRefresh={async () => {
-            getAmountList(queryAmountRequest)
+            getAmountList(queryAmount)
           }}
           renderText={(status) => {
             return <div>{statusRecord[status]}</div>
