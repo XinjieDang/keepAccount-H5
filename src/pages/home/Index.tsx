@@ -19,9 +19,7 @@ import { DownOutline, FillinOutline } from 'antd-mobile-icons'
 import api from '@/api'
 import zhiImg from '@/assets/images/zhi.png'
 import shouImg from '@/assets/images/shou.png'
-import PullToRefresh, {
-  PullStatus,
-} from 'antd-mobile/es/components/pull-to-refresh'
+import PullToRefresh, { PullStatus } from 'antd-mobile/es/components/pull-to-refresh'
 const zhiImgSrc = zhiImg
 const shouImgSrc = shouImg
 // 默认时间
@@ -116,8 +114,7 @@ export default function Home() {
     createTime: defaultDate,
   }
   // 记账查询对象
-  const [queryAmount, setQueryAmount] =
-    useState<queryDtoType>(queryAmountRequest)
+  const [queryAmount, setQueryAmount] = useState<queryDtoType>(queryAmountRequest)
   const getAmountList = (queryDto: queryDtoType) => {
     console.log('发送请求之前的参数', queryAmount)
     api.home.amountInfo(queryAmount).then((res) => {
@@ -195,15 +192,11 @@ export default function Home() {
           </div>
           {menuList.map((item: any) => (
             <div className={style.list} key={item.payType}>
-              <h3 style={{ paddingBottom: '15px' }}>
-                {item.payType == 0 ? '支出' : '收入'}
-              </h3>
+              <h3 style={{ paddingBottom: '15px' }}>{item.payType == 0 ? '支出' : '收入'}</h3>
               <div className={style.listBox}>
                 {item.list.map((item: any) => (
                   <div
-                    className={`${style.listItem} ${
-                      currentKey === item.id ? style.activeCurrent : ''
-                    }`}
+                    className={`${style.listItem} ${currentKey === item.id ? style.activeCurrent : ''}`}
                     key={item.id}
                     data-key={item.id}
                     onClick={handleActiveItem}
@@ -237,12 +230,7 @@ export default function Home() {
             ))}
           </div>
           <div>
-            <Tag
-              round
-              color="default"
-              fill="outline"
-              onClick={() => setPickerVisible2(true)}
-            >
+            <Tag round color="default" fill="outline" onClick={() => setPickerVisible2(true)}>
               {pickerValue2}
               <Space>
                 <DownOutline />
@@ -267,10 +255,7 @@ export default function Home() {
         </div>
         <div className={style.remark}>
           <p onClick={() => setRemark(!addRemark)}>添加备注</p>
-          <div
-            className={style.TextArea}
-            style={{ display: addRemark === true ? 'block' : 'none' }}
-          >
+          <div className={style.TextArea} style={{ display: addRemark === true ? 'block' : 'none' }}>
             <TextArea
               autoSize
               placeholder="请输入备注信息"
@@ -288,9 +273,7 @@ export default function Home() {
           showCloseButton={false}
           onInput={handleKeyBoardInput}
           onDelete={handleKeyBoardOnDelete}
-          visible={
-            pickerVisible2 === true ? !visibleAccountEdit : visibleAccountEdit
-          }
+          visible={pickerVisible2 === true ? !visibleAccountEdit : visibleAccountEdit}
           customKey={'-'}
           confirmText="确定"
           onConfirm={handleConfirm}
@@ -394,21 +377,9 @@ export default function Home() {
                     key={item.createDate}
                     extra={
                       <div className={style.extra}>
-                        <Image
-                          src={zhiImgSrc}
-                          width={15}
-                          height={15}
-                          fit="cover"
-                          style={{ borderRadius: 4 }}
-                        />
+                        <Image src={zhiImgSrc} width={15} height={15} fit="cover" style={{ borderRadius: 4 }} />
                         <div>{item.expend}</div>
-                        <Image
-                          src={shouImgSrc}
-                          width={15}
-                          height={15}
-                          fit="cover"
-                          style={{ borderRadius: 4 }}
-                        />
+                        <Image src={shouImgSrc} width={15} height={15} fit="cover" style={{ borderRadius: 4 }} />
                         <div>{item.income}</div>
                       </div>
                     }
@@ -419,18 +390,13 @@ export default function Home() {
                           <div>{item.remark}</div>
                           <div
                             style={{
-                              color:
-                                item.amountType === 0 ? '#fdacac' : '#97b2ff',
+                              color: item.amountType === 0 ? '#fdacac' : '#97b2ff',
                             }}
                           >
-                            {item.amountType === 0
-                              ? '-' + item.amount
-                              : '+' + item.amount}
+                            {item.amountType === 0 ? '-' + item.amount : '+' + item.amount}
                           </div>
                         </div>
-                        <div className={style.carItemTime}>
-                          {dayjs(item.createTime).format('HH:mm')}
-                        </div>
+                        <div className={style.carItemTime}>{dayjs(item.createTime).format('HH:mm')}</div>
                       </div>
                     ))}
                   </Card>
