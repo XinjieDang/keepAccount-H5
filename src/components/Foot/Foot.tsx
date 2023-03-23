@@ -15,8 +15,13 @@
 //   }
 // }
 
-// const mapStateToProps = (state) => ({})
+// const mapStateToProps = (state: string) => console.log(state)
 
 // const mapDispatchToProps = {}
 
 // export default connect(mapStateToProps, mapDispatchToProps)(Foot)
+import React from 'react'
+
+export default function Foot() {
+  return <div>Foot</div>
+}

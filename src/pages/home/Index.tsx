@@ -9,6 +9,8 @@ import {
   TextArea,
   NumberKeyboard,
   Image,
+  Toast,
+  List,
 } from 'antd-mobile'
 import * as dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
@@ -137,12 +139,13 @@ export default function Home() {
     //设置金额
     amount.amount = parseInt(keyboardValue)
     setAmount({ ...amount })
-    console.log('提交了表单', amount)
+    //console.log('提交了表单', amount)
     //发送请求
     api.home.addAmount(amount).then((res) => {
       if (res) {
         //刷新记账列表
         getAmountList(queryAmount)
+        Toast.show({ content: '添加成功！' })
         //关闭弹出层
         setVisibleAccountEdit(false)
       }
@@ -180,6 +183,11 @@ export default function Home() {
               onClick={() => {
                 setCurrentTypeText('全部类型')
                 setCurrentKey(100)
+                queryAmount.categoryId = undefined
+                queryAmount.createTime = ''
+                setQueryAmount({ ...queryAmount })
+                getAmountList(queryAmount)
+                setvisibleType(false)
               }}
             >
               全部类型
@@ -351,7 +359,6 @@ export default function Home() {
               setPickerValue(dayjs(val).format('YYYY-MM'))
               queryAmount.createTime = dayjs(val).format('YYYY-MM')
               setQueryAmount({ ...queryAmount })
-              console.log('选择的日期后', queryAmount)
               getAmountList(queryAmount)
             }}
           />
@@ -368,66 +375,73 @@ export default function Home() {
         </div>
       </div>
       {/* 中间内容 */}
-      <div className={style.contaner}>
-        <PullToRefresh
-          onRefresh={async () => {
-            getAmountList(queryAmount)
-          }}
-          renderText={(status) => {
-            return <div>{statusRecord[status]}</div>
-          }}
-        >
-          <div className={style.contanerBoxList}>
-            {amountList.map((item: any) => (
-              <Card
-                className={style.contanerCar}
-                title={item.createDate}
-                key={item.createDate}
-                extra={
-                  <div className={style.extra}>
-                    <Image
-                      src={zhiImgSrc}
-                      width={15}
-                      height={15}
-                      fit="cover"
-                      style={{ borderRadius: 4 }}
-                    />
-                    <div>{item.expend}</div>
-                    <Image
-                      src={shouImgSrc}
-                      width={15}
-                      height={15}
-                      fit="cover"
-                      style={{ borderRadius: 4 }}
-                    />
-                    <div>{item.income}</div>
-                  </div>
-                }
-              >
-                {item.amountBos.map((item: any) => (
-                  <div className={style.carItemList} key={item.createTime}>
-                    <div className={style.carItem}>
-                      <div>{item.remark}</div>
-                      <div
-                        style={{
-                          color: item.amountType === 0 ? '#fdacac' : '#97b2ff',
-                        }}
-                      >
-                        {item.amountType === 0
-                          ? '-' + item.amount
-                          : '+' + item.amount}
+      <List>
+        <div className={style.contaner}>
+          <PullToRefresh
+            onRefresh={async () => {
+              getAmountList(queryAmount)
+            }}
+            renderText={(status) => {
+              return <div>{statusRecord[status]}</div>
+            }}
+          >
+            <div className={style.contanerBoxList}>
+              {amountList.map((item: any) =>
+                item.amountBos.length != 0 ? (
+                  <Card
+                    className={style.contanerCar}
+                    title={item.createDate}
+                    key={item.createDate}
+                    extra={
+                      <div className={style.extra}>
+                        <Image
+                          src={zhiImgSrc}
+                          width={15}
+                          height={15}
+                          fit="cover"
+                          style={{ borderRadius: 4 }}
+                        />
+                        <div>{item.expend}</div>
+                        <Image
+                          src={shouImgSrc}
+                          width={15}
+                          height={15}
+                          fit="cover"
+                          style={{ borderRadius: 4 }}
+                        />
+                        <div>{item.income}</div>
                       </div>
-                    </div>
-                    <div className={style.carItemTime}>
-                      {dayjs(item.createTime).format('HH:mm')}
-                    </div>
-                  </div>
-                ))}
-              </Card>
-            ))}
-          </div>
-        </PullToRefresh>
-      </div>
+                    }
+                  >
+                    {item.amountBos.map((item: any) => (
+                      <div className={style.carItemList} key={item.createTime}>
+                        <div className={style.carItem}>
+                          <div>{item.remark}</div>
+                          <div
+                            style={{
+                              color:
+                                item.amountType === 0 ? '#fdacac' : '#97b2ff',
+                            }}
+                          >
+                            {item.amountType === 0
+                              ? '-' + item.amount
+                              : '+' + item.amount}
+                          </div>
+                        </div>
+                        <div className={style.carItemTime}>
+                          {dayjs(item.createTime).format('HH:mm')}
+                        </div>
+                      </div>
+                    ))}
+                  </Card>
+                ) : (
+                  ' '
+                )
+              )}
+            </div>
+          </PullToRefresh>
+        </div>
+      </List>
       {/* 固定编辑按钮 */}
       <div
         className={style.editIcon}

@@ -75,7 +75,10 @@ export default function Index() {
                 </div>
               </div>
               <div>
-                <Avatar src={user.avatar} style={{ '--size': '68px' }} />
+                <Avatar
+                  src={user.avatar}
+                  style={{ '--size': '68px', '--border-radius': '34px' }}
+                />
               </div>
             </div>
           </div>

@@ -32,7 +32,7 @@ export default function Index() {
   const [form] = Form.useForm()
   //从缓存获取用户信息
   const getUserInfo = () => {
-    const localUser: User = JSON.parse(localStorage.getItem('user'))
+    const localUser: User = JSON.parse(localStorage.getItem('user') || '{}')
     // 设置表单默认信息
     form.setFieldValue('userName', localUser.userName)
     form.setFieldValue('signature', localUser.signature)

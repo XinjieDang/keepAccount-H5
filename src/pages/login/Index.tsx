@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import style from './index.module.less'
 import { Form, Input, Button } from 'antd-mobile'
 import { EyeInvisibleOutline, EyeOutline } from 'antd-mobile-icons'
-import bgImage from '@/assets/images/head-bg.jpg'
+import bgImage from '@/assets/images/bg2.jpg'
 import api from '@/api'
 const styleBg = {
   bgd: {
     backgroundImage: `url(${bgImage})`,
     backgroundSize: 'cover',
     opacity: 0.7,
+    backgroundRepeat: 'no-repeat',
   },
 }
 
